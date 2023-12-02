@@ -1,0 +1,18 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: java-learn
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0
+    password:
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/xxxx?useSSL=false&serverTimezone=UTC
+    username: root
+    password: xxxxxxx
+    driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  level:
+    com.zenith: debug
