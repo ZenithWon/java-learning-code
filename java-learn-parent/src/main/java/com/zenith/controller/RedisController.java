@@ -41,8 +41,14 @@ public class RedisController {
         return redisService.doubleWriteLockWrite(id);
     }
 
+    @PutMapping("/doubleWrite/mq/write/{id}")
+    public R doubleWriteMqWrite(@PathVariable Long id){
+        return redisService.doubleWriteMqWrite(id);
+    }
 
-
-
+    @GetMapping("/doubleWrite/mq/read/{id}")
+    public R doubleWriteMqRead(@PathVariable Long id){
+        return redisService.doubleWriteMqRead(id);
+    }
 
 }

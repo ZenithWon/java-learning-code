@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.zenith.common.R;
+import com.zenith.config.MQRedisUpdateConfig;
 import com.zenith.constant.RedisConstant;
 import com.zenith.entity.Item;
 import com.zenith.entity.RedisData;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RReadWriteLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ public class RedisServiceImpl implements RedisService {
     ItemMapper itemMapper;
     @Autowired
     RedissonClient redissonClient;
+    @Autowired
+    RabbitTemplate rabbitTemplate;
 
     private static final ExecutorService CACHE_REBUILD_THREAD=Executors.newSingleThreadExecutor();
 
@@ -218,6 +222,32 @@ public class RedisServiceImpl implements RedisService {
         }finally {
             readWriteLock.writeLock().unlock();
         }
+    }
+
+    @Override
+    public R doubleWriteMqRead(Long id) {
+        String json = stringRedisTemplate.opsForValue().get(RedisConstant.DEFAULT_ITEM_PREFIX + id);
+        if(StrUtil.isNotBlank(json)){
+            return R.ok(JSONObject.parseObject(json),"Select from redis");
+        }
+
+        Item item = itemMapper.selectById(id);
+        if(item==null){
+            return R.ok(null,"Select from mysql: data not exist");
+        }
+        rabbitTemplate.convertAndSend(MQRedisUpdateConfig.EXCHANGE_NAME,MQRedisUpdateConfig.ROUTING_KEY,JSON.toJSONString(item));
+        return R.ok(item,"Select from mysql");
+    }
+
+    @Override
+    public R doubleWriteMqWrite(Long id) {
+        Item item=new Item();
+        item.setId(id);
+        item.setName(UUID.randomUUID().toString());
+        itemMapper.updateById(item);
+
+        rabbitTemplate.convertAndSend(MQRedisUpdateConfig.EXCHANGE_NAME,MQRedisUpdateConfig.ROUTING_KEY,JSON.toJSONString(item));
+        return R.ok(item,"Update success");
     }
 
 }

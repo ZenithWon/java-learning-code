@@ -13,6 +13,12 @@ spring:
     username: root
     password: xxxxxxx
     driver-class-name: com.mysql.cj.jdbc.Driver
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: admin
+    password: admin
+    virtual-host: /
 logging:
   level:
     com.zenith: debug

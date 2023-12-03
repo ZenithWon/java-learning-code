@@ -14,4 +14,8 @@ public interface RedisService {
     R doubleWriteLockRead(Long id);
 
     R doubleWriteLockWrite(Long id);
+
+    R doubleWriteMqRead(Long id);
+
+    R doubleWriteMqWrite(Long id);
 }
