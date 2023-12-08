@@ -1,5 +1,6 @@
 package com.zenith;
 
+import com.zenith.aspect.EnableApiLog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

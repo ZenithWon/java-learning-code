@@ -14,4 +14,5 @@ import java.io.Serializable;
 public class Item implements Serializable {
     private Long id;
     private String name;
+    private Integer count;
 }

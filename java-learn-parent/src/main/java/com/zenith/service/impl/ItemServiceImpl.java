@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -33,6 +34,7 @@ public class ItemServiceImpl implements ItemService {
             Item item = new Item();
             item.setName(UUID.randomUUID().toString());
             item.setId(Long.parseLong(String.valueOf(i)));
+            item.setCount(new Random().nextInt(1000));
             itemMapper.insert(item);
         }
 
@@ -46,6 +48,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = new Item();
         item.setId(99999L);
         item.setName(UUID.randomUUID().toString());
+        item.setCount(new Random().nextInt(1000));
         itemMapper.insert(item);
 
         RedisData redisData = new RedisData();
