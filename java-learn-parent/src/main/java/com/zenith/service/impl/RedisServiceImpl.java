@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,9 +51,7 @@ public class RedisServiceImpl implements RedisService {
     void init(){
         log.info("Init bloom filter");
         List<Item> items = itemMapper.selectList(null);
-        items.forEach(item -> {
-            bloomFilter.insert(RedisConstant.DEFAULT_ITEM_PREFIX + item.getId().toString());
-        });
+        items.forEach(item -> bloomFilter.insert(RedisConstant.DEFAULT_ITEM_PREFIX + item.getId().toString()));
     }
 
     @Override
@@ -83,7 +82,7 @@ public class RedisServiceImpl implements RedisService {
             return R.ok(null,"Select from bloom filter: data is null");
         }
 
-        String res = stringRedisTemplate.opsForValue().get(RedisConstant.DEFAULT_ITEM_PREFIX + id.toString());
+        String res = stringRedisTemplate.opsForValue().get(RedisConstant.DEFAULT_ITEM_PREFIX + id);
         if(res!=null){
             return R.ok(JSONObject.parseObject(res),"Select from redis");
         }
@@ -111,7 +110,7 @@ public class RedisServiceImpl implements RedisService {
             if(!res){
                 return R.ok(null,"Cannot get lock");
             }
-            json = stringRedisTemplate.opsForValue().get(RedisConstant.DEFAULT_ITEM_PREFIX + id.toString());
+            json = stringRedisTemplate.opsForValue().get(RedisConstant.DEFAULT_ITEM_PREFIX + id);
             if(StrUtil.isNotBlank(json)){
                 return R.ok(JSONObject.parseObject(json),"Select from redis");
             }
@@ -244,6 +243,7 @@ public class RedisServiceImpl implements RedisService {
         Item item=new Item();
         item.setId(id);
         item.setName(UUID.randomUUID().toString());
+        item.setCount(new Random().nextInt(100));
         itemMapper.updateById(item);
 
         rabbitTemplate.convertAndSend(MQRedisUpdateConfig.EXCHANGE_NAME,MQRedisUpdateConfig.ROUTING_KEY,JSON.toJSONString(item));
