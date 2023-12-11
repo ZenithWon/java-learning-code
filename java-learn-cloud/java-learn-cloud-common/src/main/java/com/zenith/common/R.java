@@ -1,8 +1,11 @@
 package com.zenith.common;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class R {
     private Integer code;
     private Object data;

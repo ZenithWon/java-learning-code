@@ -1,5 +1,7 @@
 package com.zenith.order.service.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zenith.common.R;
@@ -36,7 +38,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     @Override
     public R getByIdWithUser(String id) {
         Order order = baseMapper.selectById(id);
-        User user= (User) userFeignClient.getUserById(order.getUserId()).getData();
+        R res = userFeignClient.getUserById(order.getUserId());
+        User user= JSONUtil.toBean(JSON.toJSONString(res.getData()),User.class);
         order.setUser(user);
 
         return R.ok(order);

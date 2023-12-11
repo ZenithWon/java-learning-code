@@ -17,7 +17,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public R getById(@PathVariable Long id){
+    public R getById(@PathVariable("id") Long id){
         return R.ok(userService.getById(id));
     }
 
