@@ -12,6 +12,9 @@ spring:
     username: root
     password: xxxxxxx
     driver-class-name: com.mysql.cj.jdbc.Driver
+feign:
+  hystrix:
+    enabled: true
 logging:
   level:
     com.zenith: debug
