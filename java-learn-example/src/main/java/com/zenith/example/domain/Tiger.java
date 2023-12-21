@@ -9,4 +9,8 @@ public class Tiger extends Animal{
     public void jump(){
         System.out.println("Tiger jump!");
     }
+
+    private void privateChild(){
+        System.out.println("Uses private method");
+    }
 }
