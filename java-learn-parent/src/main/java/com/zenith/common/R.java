@@ -35,4 +35,8 @@ public class R {
     public static R error(String msg){
         return new R(500,null,msg);
     }
+
+    public static R atte(){
+        return R.ok("Attention log information!");
+    }
 }
